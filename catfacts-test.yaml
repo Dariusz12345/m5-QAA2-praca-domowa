@@ -1,0 +1,25 @@
+config:
+  target: "https://catfact.ninja"
+  phases:
+    - duration: 60         # Test trwa 60 sekund
+      arrivalRate: 10      # 10 użytkowników na sekundę
+  payload:
+    path: "./payload.csv"     # Ścieżka do pliku CSV
+    fields:
+      - "fact"         # Nagłówki kolumn w pliku CSV
+      - "length"
+    skipHeader: true       # Pomijamy pierwszy wiersz (nagłówki)
+scenarios:
+  - name: Test GET and POST endpoints
+    flow:
+      - get:
+          url: "/fact"     # Endpoint GET (losowy fakt o kotach)
+      - post:
+          url: "/facts"    # Endpoint POST (dodawanie nowego faktu)
+          json:
+            fact: "{{ fact }}"   # Fakt wstawiony z pliku payload.json
+            length: "{{ length }}" # Długość faktu
+    ensure:
+      - "response_code === 200"    # Walidacja odpowiedzi GET
+      - "response_code === 201"    # Walidacja odpowiedzi POST
+
